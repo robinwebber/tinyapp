@@ -10,6 +10,10 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
+const updateLongURL = (shortURL, longURL) => {
+  urlDatabase[shortURL] = longURL;
+};
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -57,6 +61,17 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   console.log('line 54 -->', shortURL);
   delete urlDatabase[shortURL];
   res.redirect('/urls')
+});
+
+app.post('/urls/:id/update', (req, res) => {
+  name = req.body.longURL;
+  urlCode = req.params.id;
+  // console.log('line 68 -->', name);
+  // console.log('line 69 -->', urlDatabase);
+  // console.log('line 70 -->', req.body);
+  // console.log('line 71 -->', urlCode);
+  updateLongURL(urlCode, name);
+  res.redirect(`/urls/`);
 })
 
 app.post("/urls", (req, res) => {
