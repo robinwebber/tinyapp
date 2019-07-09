@@ -36,7 +36,7 @@ app.get('/urls', (req, res) => {
 });
 app.get('/urls/new', (req, res) => {
   let templateVars = { username: req.cookies["username"] };
-  console.log(req.cookies);
+  //console.log(req.cookies);
   res.render('urls_new', templateVars);
   
 });
