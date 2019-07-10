@@ -14,13 +14,10 @@ const updateLongURL = (shortURL, longURL) => {
 };
 const users = {};
 
-class User {
-  constructor(id, email, password) {
-    this.id = id;
-    this.email = email;
-    this.password = password;
-  }
-};
+
+const userCreater = (id, email, password) => {
+  users[id] = {id, email, password};
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -62,7 +59,12 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  console.log('line 58 -->', req.body);
+  //console.log('line 72 email -->', req.body.email);
+  //console.log('line 73 password -->', req.body.password);
+  id = uuidv4().slice(0,6);
+  userCreater(id, req.body.email, req.body.password);
+  console.log(users);
+  res.cookie('user_id', id);
   res.redirect("/urls")
 });
 

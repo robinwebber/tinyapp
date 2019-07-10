@@ -19,10 +19,15 @@ class User {
   }
 };
 
-const userCreater = (id, name, email) => {
+const userCreater = (id, email, password) => {
 
+  
+  users[id] = {id, email, password};
 
 }
-console.log(uuidv4().slice(0,6));
+
+userCreater('hay67d', 'robin@robin', 'hey123');
+console.log(users);
+//console.log(uuidv4().slice(0,6));
 const billy = new User('1234', 'billy@bill.com', 'billy123');
 
