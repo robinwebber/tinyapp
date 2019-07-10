@@ -12,12 +12,32 @@ app.set('view engine', 'ejs');
 const updateLongURL = (shortURL, longURL) => {
   urlDatabase[shortURL] = longURL;
 };
-const users = {};
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
 
 const userCreater = (id, email, password) => {
   users[id] = {id, email, password};
-}
+};
+
+const emailDuplicateChecker = (email) => {
+  for (keys in users) {
+    if (users[keys].email === email) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -59,13 +79,19 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  //console.log('line 72 email -->', req.body.email);
-  //console.log('line 73 password -->', req.body.password);
-  id = uuidv4().slice(0,6);
+  console.log('req.body.email.length', req.body.email.length);
+  console.log('req.body.password.length', req.body.password.length);
+  if (req.body.email.length === 0 || req.body.password.length === 0) {
+    res.status(400).send('Error: email or password left blank.');
+    
+  } else if (emailDuplicateChecker(req.body.email)) {
+    res.status(400).send('Error: email already registered.')
+  } else {
+    id = uuidv4().slice(0,6);
   userCreater(id, req.body.email, req.body.password);
-  console.log(users);
   res.cookie('user_id', id);
   res.redirect("/urls")
+  }
 });
 
 app.get("/register", (req, res) => {
