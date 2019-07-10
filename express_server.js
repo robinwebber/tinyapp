@@ -31,7 +31,7 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase, username: req.cookies["username"]};
-  console.log('line 34 -->', templateVars);
+  //console.log('line 34 -->', templateVars);
   res.render('urls_index', templateVars);
 });
 app.get('/urls/new', (req, res) => {
