@@ -53,21 +53,22 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"]};
+  let templateVars = { urls: urlDatabase, user: users[req.cookies.user_id] };
   //console.log('line 34 -->', templateVars);
   //console.log(req.cookies);
-  console.log(users[req.cookies.user_id].email);
+  //console.log(users[req.cookies.user_id].email);
   res.render('urls_index', templateVars);
 });
+
 app.get('/urls/new', (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { user: users[req.cookies.user_id] };
   //console.log(req.cookies);
   res.render('urls_new', templateVars);
   
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies.user_id] };
   res.render('urls_show', templateVars);
 });
 
@@ -95,7 +96,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies.user_id] };
   //console.log('line 60 -->', req.body.email);
   //console.log()
   res.render('registration', templateVars);
