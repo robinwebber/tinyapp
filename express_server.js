@@ -40,8 +40,8 @@ const validator = (email) => {
 };
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "user2RandomID" }
 };
 
 app.get("/", (req, res) => {
@@ -156,8 +156,9 @@ app.post('/urls/:id/update', (req, res) => {
 })
 
 app.post("/urls", (req, res) => {
+  console.log('urlDatabase', urlDatabase)
   let shortURLCode = uuidv4().slice(0, 6);
-  urlDatabase[shortURLCode] = req.body.longURL;
+  urlDatabase[shortURLCode] = {longURL: req.body.longURL, userID: req.cookies.user_id };
   res.redirect(`/urls/${shortURLCode}`);
 });
 
