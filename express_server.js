@@ -5,15 +5,21 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
-
+const uuidv4 = require('uuid/v4');
 app.set('view engine', 'ejs');
 
-const generateRandomString = () => {
-  return Math.random().toString(36).substring(2, 8);
-};
 
 const updateLongURL = (shortURL, longURL) => {
   urlDatabase[shortURL] = longURL;
+};
+const users = {};
+
+class User {
+  constructor(id, email, password) {
+    this.id = id;
+    this.email = email;
+    this.password = password;
+  }
 };
 
 const urlDatabase = {
@@ -55,6 +61,18 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.post("/register", (req, res) => {
+  console.log('line 58 -->', req.body);
+  res.redirect("/urls")
+});
+
+app.get("/register", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  //console.log('line 60 -->', req.body.email);
+  //console.log()
+  res.render('registration', templateVars);
+})
+
 app.post("/login", (req, res) => {
   //console.log('line 56 -->', req.body.username);
   res.cookie('username', req.body.username)
@@ -93,7 +111,7 @@ app.post('/urls/:id/update', (req, res) => {
 })
 
 app.post("/urls", (req, res) => {
-  let shortURLCode = generateRandomString();
+  let shortURLCode = uuidv4().slice(0,6);
   urlDatabase[shortURLCode] = req.body.longURL;
   res.redirect(`/urls/${shortURLCode}`);
 });

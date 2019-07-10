@@ -3,9 +3,26 @@
 // }
 
 // console.log(generateUid());
+const uuidv4 = require('uuid/v4');
 
 const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8)
 };
 
-console.log(generateRandomString());
+//console.log(generateRandomString());
+const users = {};
+class User {
+  constructor(id, email, password) {
+    this.id = id;
+    this.email = email;
+    this.password = password;
+  }
+};
+
+const userCreater = (id, name, email) => {
+
+
+}
+console.log(uuidv4().slice(0,6));
+const billy = new User('1234', 'billy@bill.com', 'billy123');
+
