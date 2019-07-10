@@ -55,6 +55,8 @@ app.get('/urls.json', (req, res) => {
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase, username: req.cookies["username"]};
   //console.log('line 34 -->', templateVars);
+  //console.log(req.cookies);
+  console.log(users[req.cookies.user_id].email);
   res.render('urls_index', templateVars);
 });
 app.get('/urls/new', (req, res) => {
@@ -79,8 +81,6 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  console.log('req.body.email.length', req.body.email.length);
-  console.log('req.body.password.length', req.body.password.length);
   if (req.body.email.length === 0 || req.body.password.length === 0) {
     res.status(400).send('Error: email or password left blank.');
     
