@@ -9,8 +9,9 @@ const uuidv4 = require('uuid/v4');
 app.set('view engine', 'ejs');
 
 
-const updateLongURL = (shortURL, longURL) => {
-  urlDatabase[shortURL] = longURL;
+const updateLongURL = (shortURL, longURL, userID) => {
+  
+  urlDatabase[shortURL] = {longURL: longURL, userID: userID};
 };
 
 const users = {
@@ -72,7 +73,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies.user_id] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.cookies.user_id] };
   res.render('urls_show', templateVars);
 });
 
@@ -100,7 +101,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.cookies.user_id] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.cookies.user_id] };
 
   res.render('registration', templateVars);
 });
@@ -145,20 +146,21 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:id/update', (req, res) => {
-  name = req.body.longURL;
-  urlCode = req.params.id;
+  const longURL = req.body.longURL;
+  const shortURL = req.params.id;
+  const IDCode = req.cookies.user_id;
   // console.log('line 68 -->', name);
   // console.log('line 69 -->', urlDatabase);
   // console.log('line 70 -->', req.body);
   // console.log('line 71 -->', urlCode);
-  updateLongURL(urlCode, name);
+  updateLongURL(shortURL, longURL, IDCode);
   res.redirect(`/urls/`);
 })
 
 app.post("/urls", (req, res) => {
-  console.log('urlDatabase', urlDatabase)
   let shortURLCode = uuidv4().slice(0, 6);
   urlDatabase[shortURLCode] = {longURL: req.body.longURL, userID: req.cookies.user_id };
+  console.log('urlDatabase', urlDatabase)
   res.redirect(`/urls/${shortURLCode}`);
 });
 
