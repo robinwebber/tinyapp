@@ -34,6 +34,11 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
+  },
+  "rando": {
+    id: "rando",
+    email: "r@b",
+    password: "haha"
   }
 };
 
@@ -96,7 +101,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -152,9 +157,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   // const id = req.params.shortURL;
 
   const shortURL = req.params.shortURL;
-  //console.log('line 52-->', req.params);
-  //console.log('line 53 -->', urlDatabase[shortURL]);
-  //console.log('line 54 -->', shortURL);
+  
   delete urlDatabase[shortURL];
   res.redirect('/urls')
 });
