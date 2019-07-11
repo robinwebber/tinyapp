@@ -10,7 +10,8 @@ app.use(cookieSession({
   name: 'session',
   keys: ['robisaveryhelpfulmentor'],
 }));
-const validator = require('./helpers');
+const {validator} = require('./helpers');
+const {userCreator} = require('./helpers');
 const uuidv4 = require('uuid/v4');
 const bcrypt = require('bcrypt');
 app.set('view engine', 'ejs');
@@ -47,10 +48,6 @@ const users = {
     email: "r@b",
     password: "haha"
   }
-};
-
-const userCreator = (id, email, password) => {
-  users[id] = { id, email, password: bcrypt.hashSync(password, 10) };
 };
 
 
@@ -108,7 +105,7 @@ app.post("/register", (req, res) => {
     res.status(400).send('Error: email already registered.')
   } else {
     id = uuidv4().slice(0, 6);
-    userCreator(id, req.body.email, req.body.password);
+    userCreator(id, req.body.email, req.body.password, users);
     req.session.user_id = id;
     res.redirect("/urls")
   }
