@@ -101,7 +101,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.cookies.user_id] };
+  let templateVars = { user: users[req.cookies.user_id] };
 
   res.render('registration', templateVars);
 });
