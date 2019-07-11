@@ -18,6 +18,7 @@ const testUsers = {
 describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = validator("user@example.com", testUsers)
+
     const expectedOutput = { valid: true, user:{
       id: "userRandomID", 
       email: "user@example.com", 
@@ -25,6 +26,7 @@ describe('getUserByEmail', function() {
     }};
     assert.deepEqual(user, expectedOutput);
   })
+  
   it('should return { valid: false, } object if an email is not in the database', function() {
     const user = validator("uper@example.com", testUsers);
     const expectedOutput = { valid: false }
