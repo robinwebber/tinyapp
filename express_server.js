@@ -53,14 +53,6 @@ const userCreator = (id, email, password) => {
   users[id] = { id, email, password: bcrypt.hashSync(password, 10) };
 };
 
-const validator = (email, database) => {
-  for (keys in database) {
-    if (database[keys].email === email) {
-      return { valid: true, user: database[keys] }
-    }
-  }
-  return { valid: false }
-};
 
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },

@@ -8,4 +8,4 @@ const validator = (email, database) => {
   return { valid: false }
 };
 
-module.exports = {validator};
+module.exports = validator;
