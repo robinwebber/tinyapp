@@ -6,6 +6,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const uuidv4 = require('uuid/v4');
+const bcrypt = require('bcrypt');
 app.set('view engine', 'ejs');
 
 const urlsForUser = (id) => {
@@ -42,8 +43,8 @@ const users = {
   }
 };
 
-const userCreater = (id, email, password) => {
-  users[id] = { id, email, password };
+const userCreator = (id, email, password) => {
+  users[id] = { id, email, password: bcrypt.hashSync(password, 10) };
 };
 
 const validator = (email) => {
@@ -113,7 +114,7 @@ app.post("/register", (req, res) => {
     res.status(400).send('Error: email already registered.')
   } else {
     id = uuidv4().slice(0, 6);
-    userCreater(id, req.body.email, req.body.password);
+    userCreator(id, req.body.email, req.body.password);
     res.cookie('user_id', id);
     res.redirect("/urls")
   }
@@ -138,7 +139,7 @@ app.post("/login", (req, res) => {
   if (!validatedUser.valid) {
     res.status(403).send('Error: Log in failed.');
 
-  } else if (validatedUser.user.password === req.body.password) {
+  } else if (bcrypt.compareSync(req.body.password, validatedUser.user.password)) {
     res.cookie('user_id', validator(email).user.id);
   }
 
@@ -151,34 +152,43 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls")
 })
 
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.post('/urls/:shortURL/delete', (req, res) => { 
 
-  // const { shortURL } = req.params;
-  // const id = req.params.shortURL;
+  if (!req.cookies.user_id) {
+    res.redirect('/login');
+  } else {
 
   const shortURL = req.params.shortURL;
-  
+
   delete urlDatabase[shortURL];
   res.redirect('/urls')
+  }
 });
 
 app.post('/urls/:id/update', (req, res) => {
+
+  if (!req.cookies.user_id) {
+    res.redirect('/login');
+  } else {
   const longURL = req.body.longURL;
   const shortURL = req.params.id;
   const IDCode = req.cookies.user_id;
-  // console.log('line 68 -->', name);
-  // console.log('line 69 -->', urlDatabase);
-  // console.log('line 70 -->', req.body);
-  // console.log('line 71 -->', urlCode);
+  
   updateLongURL(shortURL, longURL, IDCode);
   res.redirect(`/urls/`);
+  };
 })
 
 app.post("/urls", (req, res) => {
+
+  if (!req.cookies.user_id) {
+    res.redirect('/login');
+  } else {
   let shortURLCode = uuidv4().slice(0, 6);
   urlDatabase[shortURLCode] = {longURL: req.body.longURL, userID: req.cookies.user_id };
-  console.log('urlDatabase', urlDatabase)
+  //console.log('urlDatabase', urlDatabase)
   res.redirect(`/urls/${shortURLCode}`);
+  };
 });
 
 
