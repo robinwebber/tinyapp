@@ -4,12 +4,13 @@ const PORT = 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 var cookieSession = require('cookie-session')
-var cookieParser = require('cookie-parser');
-// app.use(cookieParser());
+
+
 app.use(cookieSession({
   name: 'session',
   keys: ['robisaveryhelpfulmentor'],
 }));
+
 const {validator} = require('./helpers');
 const {userCreator} = require('./helpers');
 const {urlsForUser} = require('./helpers');
