@@ -12,20 +12,11 @@ app.use(cookieSession({
 }));
 const {validator} = require('./helpers');
 const {userCreator} = require('./helpers');
+const {urlsForUser} = require('./helpers');
 const uuidv4 = require('uuid/v4');
 const bcrypt = require('bcrypt');
 app.set('view engine', 'ejs');
 
-const urlsForUser = (id) => {
-  const filteredDB = {};
-
-  for (const shortURLs in urlDatabase) {
-    if (urlDatabase[shortURLs].userID === id) {
-      filteredDB[shortURLs] = urlDatabase[shortURLs];
-    }
-  }
-  return filteredDB;
-};
 
 const updateLongURL = (shortURL, longURL, userID) => {
   
@@ -67,7 +58,7 @@ app.get('/urls.json', (req, res) => {
 app.get('/urls', (req, res) => {
 
   // filer urlDatabase based on user ID
-  usersShortURLs = urlsForUser(req.session.user_id);
+  usersShortURLs = urlsForUser(req.session.user_id, urlDatabase);
 
   let templateVars = { urls: usersShortURLs, user: users[req.session.user_id] };
   

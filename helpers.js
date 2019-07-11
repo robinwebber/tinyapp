@@ -15,5 +15,17 @@ const userCreator = (id, email, password, database) => {
   database[id] = { id, email, password: bcrypt.hashSync(password, 10) };
 };
 
+const urlsForUser = (id, database) => {
+  const filteredDB = {};
+
+  for (const shortURLs in database) {
+    if (database[shortURLs].userID === id) {
+      filteredDB[shortURLs] = database[shortURLs];
+    }
+  }
+  return filteredDB;
+};
+
 module.exports = { validator, 
-                    userCreator };
+                  userCreator,
+                  urlsForUser };
