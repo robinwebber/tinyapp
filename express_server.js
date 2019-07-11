@@ -8,6 +8,16 @@ app.use(cookieParser());
 const uuidv4 = require('uuid/v4');
 app.set('view engine', 'ejs');
 
+const urlsForUser = (id) => {
+  const filteredDB = {};
+
+  for (const shortURLs in urlDatabase) {
+    if (urlDatabase[shortURLs].userID === id) {
+      filteredDB[shortURLs] = urlDatabase[shortURLs];
+    }
+  }
+  return filteredDB;
+};
 
 const updateLongURL = (shortURL, longURL, userID) => {
   
@@ -54,7 +64,11 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase, user: users[req.cookies.user_id] };
+
+  // filer urlDatabase based on user ID
+  usersShortURLs = urlsForUser(req.cookies.user_id);
+
+  let templateVars = { urls: usersShortURLs, user: users[req.cookies.user_id] };
   //console.log('line 34 -->', templateVars);
   //console.log(req.cookies);
   //console.log(users[req.cookies.user_id].email);
