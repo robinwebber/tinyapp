@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-// Retrieves a user by email, then allows for checks to be run against the result
+// Retrieves a user from database by email, then allows for checks to be run against the result
 const validator = (email, database) => {
   for (keys in database) {
     if (database[keys].email === email) {
@@ -10,11 +10,12 @@ const validator = (email, database) => {
   return { valid: false }
 };
 
-// Creates a new user to be added to the database
+// Creates a new user to be added to the user database.
 const userCreator = (id, email, password, database) => {
   database[id] = { id, email, password: bcrypt.hashSync(password, 10) };
 };
 
+// filters database to return a database of the same structure only including a given users entries.
 const urlsForUser = (id, database) => {
   const filteredDB = {};
 
@@ -26,6 +27,13 @@ const urlsForUser = (id, database) => {
   return filteredDB;
 };
 
+// updates the longURL of a given shortURL in the database and attaches the changes to a user id.
+const updateLongURL = (shortURL, longURL, userID, database) => {
+  
+  database[shortURL] = {longURL: longURL, userID: userID};
+};
+
 module.exports = { validator, 
                   userCreator,
-                  urlsForUser };
+                  urlsForUser,
+                  updateLongURL };

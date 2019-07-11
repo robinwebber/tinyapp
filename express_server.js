@@ -13,15 +13,11 @@ app.use(cookieSession({
 const {validator} = require('./helpers');
 const {userCreator} = require('./helpers');
 const {urlsForUser} = require('./helpers');
+const {updateLongURL} = require('./helpers');
 const uuidv4 = require('uuid/v4');
 const bcrypt = require('bcrypt');
 app.set('view engine', 'ejs');
 
-
-const updateLongURL = (shortURL, longURL, userID) => {
-  
-  urlDatabase[shortURL] = {longURL: longURL, userID: userID};
-};
 
 const users = {
   "userRandomID": {
@@ -156,7 +152,7 @@ app.post('/urls/:id/update', (req, res) => {
   const shortURL = req.params.id;
   const IDCode = req.session.user_id;
   
-  updateLongURL(shortURL, longURL, IDCode);
+  updateLongURL(shortURL, longURL, IDCode, urlDatabase);
   res.redirect(`/urls/`);
   };
 })
