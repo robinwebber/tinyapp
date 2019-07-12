@@ -74,7 +74,7 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
 
-  if (urlDatabase[req.params.shortURL]) {
+  if (urlDatabase[req.params.shortURL].userID === req.session.user_id) {
     let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id] };
     res.render('urls_show', templateVars);
   } else {
@@ -153,8 +153,8 @@ app.post('/urls/:id/update', (req, res) => {
   } else {
     const longURL = req.body.longURL;
     const shortURL = req.params.id;
-    const IDCode = req.session.user_id;
-    updateLongURL(shortURL, longURL, IDCode, urlDatabase);
+    const idCode = req.session.user_id;
+    updateLongURL(shortURL, longURL, idCode, urlDatabase);
     res.redirect(`/urls/`);
   }
 });
