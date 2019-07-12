@@ -63,6 +63,18 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+app.post('/urls', (req, res) => {
+
+  if (!req.session.user_id) {
+    res.redirect('/login');
+  } else {
+    let shortURLCode = uuidv4().slice(0, 6);
+    urlDatabase[shortURLCode] = { longURL: req.body.longURL, userID: req.session.user_id };
+    
+    res.redirect(`/urls/${shortURLCode}`);
+  }
+});
+
 app.get('/urls/new', (req, res) => {
   let templateVars = { user: users[req.session.user_id] };
   if (!req.session.user_id) {
@@ -85,52 +97,6 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
-});
-
-app.post('/register', (req, res) => {
-  if (req.body.email.length === 0 || req.body.password.length === 0) {
-    res.status(400).send('Error: email or password left blank.');
-
-  } else if (validator(req.body.email, users).valid) {
-    res.status(400).send('Error: email already registered.');
-  } else {
-    const id = uuidv4().slice(0, 6);
-    userCreator(id, req.body.email, req.body.password, users);
-    req.session.user_id = id;
-    res.redirect("/urls");
-  }
-});
-
-app.get('/register', (req, res) => {
-  let templateVars = { user: users[req.session.user_id] };
-
-  res.render('registration', templateVars);
-});
-
-app.get('/login', (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.session.user_id] };
-
-  res.render('login', templateVars);
-});
-
-app.post('/login', (req, res) => {
-
-  const email = req.body.email;
-  const validatedUser = validator(email, users);
-  if (!validatedUser.valid) {
-    res.status(403).send('Error: Log in failed.');
-
-  } else if (bcrypt.compareSync(req.body.password, validatedUser.user.password)) {
-    req.session.user_id = validatedUser.user.id;
-  }
-
-  res.redirect("/urls");
-});
-
-app.post('/logout', (req, res) => {
-
-  res.clearCookie('session');
-  res.redirect("/urls");
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
@@ -159,18 +125,52 @@ app.post('/urls/:id/update', (req, res) => {
   }
 });
 
-app.post('/urls', (req, res) => {
+app.get('/register', (req, res) => {
+  let templateVars = { user: users[req.session.user_id] };
 
-  if (!req.session.user_id) {
-    res.redirect('/login');
+  res.render('registration', templateVars);
+});
+
+app.post('/register', (req, res) => {
+  if (req.body.email.length === 0 || req.body.password.length === 0) {
+    res.status(400).send('Error: email or password left blank.');
+
+  } else if (validator(req.body.email, users).valid) {
+    res.status(400).send('Error: email already registered.');
   } else {
-    let shortURLCode = uuidv4().slice(0, 6);
-    urlDatabase[shortURLCode] = { longURL: req.body.longURL, userID: req.session.user_id };
-    
-    res.redirect(`/urls/${shortURLCode}`);
+    const id = uuidv4().slice(0, 6);
+    userCreator(id, req.body.email, req.body.password, users);
+    req.session.user_id = id;
+    res.redirect("/urls");
   }
 });
 
+
+app.get('/login', (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[req.session.user_id] };
+
+  res.render('login', templateVars);
+});
+
+app.post('/login', (req, res) => {
+
+  const email = req.body.email;
+  const validatedUser = validator(email, users);
+  if (!validatedUser.valid) {
+    res.status(403).send('Error: Log in failed.');
+
+  } else if (bcrypt.compareSync(req.body.password, validatedUser.user.password)) {
+    req.session.user_id = validatedUser.user.id;
+  }
+
+  res.redirect("/urls");
+});
+
+app.post('/logout', (req, res) => {
+
+  res.clearCookie('session');
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
